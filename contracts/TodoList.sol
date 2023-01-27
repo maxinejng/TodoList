@@ -1,42 +1,41 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
 contract TodoList {
-  uint public taskCount = 0;
 
-  struct Task {
-    uint id;
-    string content;
-    bool completed;
-  }
+    uint public taskCount;
 
-  mapping(uint => Task) public tasks;
+    mapping(uint => task) public tasks;
 
-  event TaskCreated(
-    uint id,
-    string content,
-    bool completed
-  );
+    event taskAdded(uint id, string content, bool isCompleted);
 
-  event TaskCompleted(
-    uint id,
-    bool completed
-  );
+    event taskCompleted(uint id, bool isCompleted);
 
-  constructor() public {
-    createTask("Check out dappuniversity.com");
-  }
+    event taskList(uint id, string content);
 
-  function createTask(string memory _content) public {
-    taskCount ++;
-    tasks[taskCount] = Task(taskCount, _content, false);
-    emit TaskCreated(taskCount, _content, false);
-  }
+    struct task {
+        uint id;
+        string content;
+        bool isCompleted;
+    }
 
-  function toggleCompleted(uint _id) public {
-    Task memory _task = tasks[_id];
-    _task.completed = !_task.completed;
-    tasks[_id] = _task;
-    emit TaskCompleted(_id, _task.completed);
-  }
+    function addTask(string memory _newTask) public {
+        taskCount += 1;
+        tasks[taskCount] = task(taskCount, _newTask, false);
+        emit taskAdded(taskCount, _newTask, false);
+    } 
+
+    function taskComplete(uint _id) public {
+        tasks[_id].isCompleted = true;
+        emit taskCompleted(_id, true);
+    }
+
+    function seeTasks() public {
+        for (uint i = 0; i<=taskCount; i++) {
+            if (tasks[i].isCompleted == false) {
+                emit taskList(tasks[i].id, tasks[i].content);
+            }
+        }
+    }
 
 }
